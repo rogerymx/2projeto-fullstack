@@ -58,7 +58,6 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Login:', { email, password });
-    // Aqui você pode adicionar a lógica de autenticação
   };
 
   return (
