@@ -52,9 +52,9 @@ const UserSearch = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8080/pessoas"); // Altere para o endpoint correto da sua API
+        const response = await fetch("http://localhost:8080/pessoas");
         const data = await response.json();
-        dispatch({ type: "SET_USERS", payload: data }); // Ajuste se a resposta da API tiver outro formato
+        dispatch({ type: "SET_USERS", payload: data });
         setMessage("Usuários carregados.");
       } catch (error) {
         setMessage("Erro ao carregar usuários.");
@@ -76,9 +76,7 @@ const UserSearch = () => {
     dispatch({ type: "FILTER_USERS", payload: filteredUsers });
 
     setMessage(
-      filteredUsers.length
-        ? "Usuário(s) encontrado(s)."
-        : "Nenhum usuário encontrado."
+      filteredUsers.length ? "Usuário(s) encontrado(s)." : "Nenhum usuário encontrado."
     );
   };
 

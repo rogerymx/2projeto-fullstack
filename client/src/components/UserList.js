@@ -2,22 +2,29 @@ import React, { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import styled from "styled-components";
 
+// Ajuste o espaço entre os cards
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Colunas flexíveis */
+  gap: 40px; /* Aumentei o espaçamento entre os cards */
   margin: 20px;
   justify-items: center;
+  width: 100%;
+  max-width: 100%;  
 `;
 
 const UserCard = styled.div`
-  width: 250px;
+  width: 100%;
+  max-width: 320px; /* Limitando o tamanho do card */
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: #f4f4f9;
   text-align: center;
   transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   &:hover {
     transform: scale(1.05);
@@ -25,27 +32,28 @@ const UserCard = styled.div`
 `;
 
 const Avatar = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 120px; /* Tamanho do avatar ajustado */
+  height: 120px;
   border-radius: 50%;
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Aumento do espaçamento abaixo da imagem */
 `;
 
 const UserName = styled.h3`
   font-size: 18px;
   color: #333;
   margin: 5px 0;
+  text-align: center;
 `;
 
 const UserDetails = styled.p`
   font-size: 14px;
   color: #555;
+  margin: 3px 0; /* Ajuste no espaçamento entre os textos */
 `;
 
 const Message = styled.p`
   font-size: 16px;
   color: #888;
-  margin-top: 20px;
 `;
 
 const UserList = () => {
@@ -56,17 +64,12 @@ const UserList = () => {
     const fetchUsers = async () => {
       try {
         const response = await fetch("http://localhost:8080/pessoas");
-        if (!response.ok) {
-          throw new Error(`Erro ao buscar usuários: ${response.status}`);
-        }
         const data = await response.json();
-
-        // Verifica se a resposta é um array válido
         if (Array.isArray(data)) {
           dispatch({ type: "SET_USERS", payload: data });
         } else {
-          console.error("Resposta da API não é um array:", data);
-          dispatch({ type: "SET_USERS", payload: [] }); // Garante que `users` será sempre um array
+          console.error("Resposta da API não é um array");
+          dispatch({ type: "SET_USERS", payload: [] });
         }
       } catch (error) {
         console.error("Erro ao buscar usuários:", error);
@@ -74,26 +77,20 @@ const UserList = () => {
       }
     };
 
-    // Busca usuários apenas se a lista atual estiver vazia
     if (users.length === 0) {
       fetchUsers();
     }
   }, [dispatch, users]);
 
-  // Mensagem enquanto os usuários estão sendo carregados
   if (users.length === 0) {
     return <Message>Carregando usuários ou nenhum usuário encontrado.</Message>;
   }
 
-  // Renderiza a lista de usuários
   return (
     <GridContainer>
       {users.map((user) => (
         <UserCard key={user._id}>
-          <Avatar
-            src={user.imagem || "https://via.placeholder.com/100"}
-            alt={user.nome}
-          />
+          <Avatar src={user.imagem || "https://via.placeholder.com/100"} alt={user.nome} />
           <UserName>{user.nome}</UserName>
           <UserDetails>
             Gênero: {user.genero}, Idade: {user.idade}

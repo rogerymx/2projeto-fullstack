@@ -5,10 +5,8 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Reddit Mono', monospace;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background-color: #f5f5f5;
+    display: block; /* Remover flex do body */
   }
 
   .container {
