@@ -1,71 +1,51 @@
 const express = require("express");
-const router = express.Router();
-const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-require("../models/Usuario");
-const Usuario = mongoose.model("usuarios");
-const bcryptjs = require("bcryptjs");
-const SECRET = "segredojwt123";
+const cors = require("cors");
+const compression = require("compression");
 
-//rota de criacao de usuario
-router.post("/", async (req,res) => {
-    if(!req.body.email || typeof req.body.email === undefined || req.body.email === null) {
-        return res.status(400).json({message: "Erro, e-mail invalido"});
-    }
+const app = express();
 
-    if(!req.body.senha || typeof req.body.senha === undefined || req.body.senha === null) {
-        return res.status(400).json({message: "Erro, senha invalida"});
-    }
+// Middleware para compactação de respostas
+app.use(compression());
 
-    if(req.body.senha.length < 4) {
-        return res.status(400).json({message: "Senha muito curta"});
-    }
+// Middleware para interpretar JSON
+app.use(express.json());
 
-    try {
-        const salt = bcryptjs.genSaltSync(10);
-        const hash = bcryptjs.hashSync(req.body.senha, salt);
+// Middleware para habilitar CORS
+app.use(cors());
 
-        const novoUsuario = new Usuario({
-            email: req.body.email,
-            senha: hash
-        });
+// Configuração do Pool de Conexões do MongoDB
+mongoose
+    .connect("mongodb+srv://roger:roger123@cluster0.zrbpx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => {
+        console.log("MongoDB conectado...");
+    })
+    .catch((err) => {
+        console.error("Erro ao conectar ao MongoDB:", err);
+    });
 
-        const usuarioSalvo = await novoUsuario.save();
-        return res.status(201).json({message: "Conta criada com sucesso!!!", usuarioSalvo:usuarioSalvo});
-    } catch(erro) {
-        console.log("Erro interno no servidor, erro: "+erro);
-    }
+// Rotas para API
+const usuarioRoutes = require("./routes/usuarios");
+const pessoaRoutes = require("./routes/pessoas");
+app.use("/usuarios", usuarioRoutes);
+app.use("/pessoas", pessoaRoutes);
+
+// Middleware para tratar erros 404 (Rota não encontrada)
+app.use((req, res, next) => {
+    res.status(404).json({ message: "Rota não encontrada" });
 });
 
-//rota de login
-router.post("/login", async (req,res) => {
-    if(!req.body.email || typeof req.body.email === undefined || req.body.email === null) {
-        return res.status(400).json({message: "Erro, e-mail invalido"});
-    }
+// Middleware para tratamento de erros globais
+app.use((err, req, res, next) => {
+    console.error("Erro no servidor:", err);
+    res.status(500).json({ message: "Erro interno no servidor" });
+});
 
-    if(!req.body.senha || typeof req.body.senha === undefined || req.body.senha === null) {
-        return res.status(400).json({message: "Erro, senha invalida"});
-    }
-
-    try {
-        const usuarioBuscado = await Usuario.findOne({email: req.body.email});
-
-        if(!usuarioBuscado) {
-            return res.status(404).json({message: "Erro, nenhum usuario encontrado com este e-mail"});
-        }
-
-        const batem = await bcryptjs.compare(req.body.senha, usuarioBuscado.senha);
-
-        if(batem) {
-            const token = jwt.sign({userId: usuarioBuscado._id}, SECRET, {expiresIn: "1 h"});
-            return res.status(200).json({message: "Login realizado com sucesso!!!", token:token});
-        } else {
-            return res.status(400).json({message: "Erro, senha incorreta"});
-        }
-    } catch(erro) {
-        console.log("Erro interno no servidor, erro: "+erro);
-    }
-})
-
-
-module.exports = router;
+// Iniciar servidor
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});

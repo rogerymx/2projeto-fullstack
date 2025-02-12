@@ -17,7 +17,11 @@ const Pessoa = new Schema({
     email: {
         type: String,
         required: true
-    }
+    },
+    imagem: {
+        type: String,
+        required: true
+    },
 });
 
 mongoose.model("pessoas", Pessoa);

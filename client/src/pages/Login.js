@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-
+import React, { useState } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Importa o hook de navegação
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -51,13 +52,46 @@ const Button = styled.button`
   }
 `;
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const ErrorMessage = styled.div`
+  color: red;
+  margin-top: 1rem;
+`;
 
-  const handleSubmit = (e) => {
+const SuccessMessage = styled.div`
+  color: green;
+  margin-top: 1rem;
+`;
+
+const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login:', { email, password });
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await axios.post("http://localhost:8080/usuarios/login", {
+        email,
+        senha: password,
+      });
+
+      // Exibe mensagem de sucesso e salva o token (se necessário)
+      setSuccess(response.data.message);
+      localStorage.setItem("token", response.data.token); // Armazena o token no localStorage
+      navigate("/2projeto-fullstack/");
+    } catch (err) {
+      // Exibe mensagem de erro vinda do servidor
+      if (err.response && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Erro ao realizar login. Tente novamente.");
+      }
+    }
   };
 
   return (
@@ -67,24 +101,26 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <InputGroup>
             <Label>Email</Label>
-            <Input 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </InputGroup>
           <InputGroup>
             <Label>Senha</Label>
-            <Input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </InputGroup>
           <Button type="submit">Entrar</Button>
         </form>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {success && <SuccessMessage>{success}</SuccessMessage>}
       </LoginBox>
     </Container>
   );

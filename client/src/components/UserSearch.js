@@ -52,9 +52,9 @@ const UserSearch = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("https://dummyjson.com/users");
+        const response = await fetch("http://localhost:8080/pessoas"); // Altere para o endpoint correto da sua API
         const data = await response.json();
-        dispatch({ type: "SET_USERS", payload: data.users });
+        dispatch({ type: "SET_USERS", payload: data }); // Ajuste se a resposta da API tiver outro formato
         setMessage("Usuários carregados.");
       } catch (error) {
         setMessage("Erro ao carregar usuários.");
@@ -70,9 +70,7 @@ const UserSearch = () => {
     }
 
     const filteredUsers = state.allUsers.filter((user) =>
-      `${user.firstName} ${user.lastName}`
-        .toLowerCase()
-        .startsWith(input.toLowerCase())
+      user.nome.toLowerCase().startsWith(input.toLowerCase())
     );
 
     dispatch({ type: "FILTER_USERS", payload: filteredUsers });
