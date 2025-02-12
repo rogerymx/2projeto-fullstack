@@ -1,3 +1,5 @@
+require('dotenv').config(); // Carrega as variáveis do arquivo .env
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -14,9 +16,9 @@ app.use(express.json());
 // Middleware para habilitar CORS
 app.use(cors());
 
-// Configuração do Pool de Conexões do MongoDB
+// Configuração do Pool de Conexões do MongoDB usando variável de ambiente
 mongoose
-    .connect("mongodb+srv://roger:roger123@cluster0.zrbpx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    .connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
