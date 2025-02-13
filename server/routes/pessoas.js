@@ -11,8 +11,7 @@ router.post("/", auth.verificaUser, async (req, res) => {
         return res.status(400).json({ message: "Erro, nome inválido" });
     }
 
-    // Verificação de idade
-    if (!req.body.idade || typeof req.body.idade !== "number" || req.body.idade <= 0 || req.body.idade > 120) {
+    if (!req.body.idade || req.body.idade <= 0 || req.body.idade > 120) {
         return res.status(400).json({ message: "Erro, idade inválida. A idade deve ser entre 1 e 120 anos." });
     }
 
@@ -33,10 +32,11 @@ router.post("/", auth.verificaUser, async (req, res) => {
 
         // Lista de URLs de imagens aleatórias
         const imageUrls = [
-            "https://m.media-amazon.com/images/I/61d+MhFjaAL._AC_UF1000,1000_QL80_.jpg",
-            "https://acdn.mitiendanube.com/stores/823/740/products/pendure_quadro_____1-copia-41-bd84db09085a9f334f16587623908727-640-0.png",
-            "https://i.pinimg.com/736x/87/fb/5f/87fb5fe01275c5d32ce22f0e22f18e7a.jpg",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRowHhdTB04EQSOcRuRTqLHvk96K4lS3UupYg&s"   
+            "https://thispersonnotexist.org/downloadimage/Ac3RhdGljL21hbi9zZWVkMjAyMC5qcGVn",
+            "https://thispersonnotexist.org/downloadimage/Ac3RhdGljL21hbi9zZWVkNTIxMDIuanBlZw==",
+            "https://thispersonnotexist.org/downloadimage/Ac3RhdGljL3dvbWFuL3NlZWQ1MTI5NC5qcGVn",
+            "https://thispersonnotexist.org/downloadimage/Ac3RhdGljL21hbi9zZWVkMzkyMjkuanBlZw==",
+            "https://thispersonnotexist.org/downloadimage/Ac3RhdGljL21hbi9zZWVkMzgyNjAuanBlZw=="
         ];
 
         // Seleciona uma imagem aleatória

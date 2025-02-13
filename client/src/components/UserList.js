@@ -83,7 +83,7 @@ const UserList = () => {
   }, [dispatch, users]);
 
   if (users.length === 0) {
-    return <Message>Carregando usuários ou nenhum usuário encontrado.</Message>;
+    return <Message>Nenhum usuário cadastrado.</Message>;
   }
 
   return (

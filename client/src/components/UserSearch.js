@@ -55,9 +55,9 @@ const UserSearch = () => {
         const response = await fetch("http://localhost:8080/pessoas");
         const data = await response.json();
         dispatch({ type: "SET_USERS", payload: data });
-        setMessage("Usuários carregados.");
+        setMessage("Dados carregados.");
       } catch (error) {
-        setMessage("Erro ao carregar usuários.");
+        setMessage("Erro ao carregar dados.");
       }
     };
     fetchUsers();
